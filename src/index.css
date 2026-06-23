@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ui-gold: #F1B300;
+  --color-ui-gold-dark: #C99700;
+  --color-ui-green: #27500A;
+  --color-ui-green-light: #3a7010;
+  --color-ui-green-pale: #EFF5E8;
+  --color-ui-cream: #FAFAF7;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background-color: #FAFAF7;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
