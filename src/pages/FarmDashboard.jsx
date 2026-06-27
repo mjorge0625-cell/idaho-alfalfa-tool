@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { getYieldLoss, GRADE_PRICES } from '../lib/yieldLoss'
 import { getCropDroughtAdvice, RISK_STYLES } from '../lib/cropAdvice'
@@ -29,9 +29,34 @@ function AdviceCard({ cropType, acres, advice }) {
 }
 
 export default function FarmDashboard() {
-  const { farm } = useFarm()
+  const { farm: contextFarm } = useFarm()
   const [waterCut, setWaterCut] = useState(25)
   const [stressLevel, setStressLevel] = useState('moderate')
+  const [isSharedView, setIsSharedView] = useState(false)
+  const [sharedFarm, setSharedFarm] = useState(null)
+  const [toast, setToast] = useState(false)
+
+  // Load shared farm data from URL param (display-only, does not overwrite localStorage)
+  useEffect(() => {
+    const param = new URLSearchParams(window.location.search).get('farm')
+    if (!param) return
+    try {
+      const data = JSON.parse(decodeURIComponent(atob(param)))
+      setSharedFarm(data)
+      setIsSharedView(true)
+    } catch { /* malformed param — ignore */ }
+  }, [])
+
+  const farm = sharedFarm ?? contextFarm
+
+  function handleShare() {
+    const encoded = btoa(encodeURIComponent(JSON.stringify(farm)))
+    const url = `${window.location.origin}${window.location.pathname}?farm=${encoded}`
+    navigator.clipboard.writeText(url).then(() => {
+      setToast(true)
+      setTimeout(() => setToast(false), 3500)
+    })
+  }
 
   const hasCrops = farm.crops.length > 0
 
@@ -81,12 +106,62 @@ export default function FarmDashboard() {
 
   return (
     <div className="flex-1">
+      {/* Print stylesheet */}
+      <style>{`
+        @media print {
+          nav, footer, .no-print { display: none !important; }
+          .fixed { display: none !important; }
+          .print-header { display: block !important; }
+          body { font-size: 12px; color: #000; }
+          * { box-shadow: none !important; }
+        }
+        .print-header { display: none; }
+      `}</style>
+
+      {/* Print-only header */}
+      <div className="print-header px-6 pt-4 pb-2 border-b border-gray-300 mb-4">
+        <p className="font-bold text-lg">Idaho Alfalfa Decision Tool — Farm Summary</p>
+        <p className="text-sm text-gray-600">
+          {farm.farmerName || 'My Farm'}{farm.location ? ` · ${farm.location}` : ''} · {new Date().toLocaleDateString()}
+        </p>
+      </div>
+
       <PageHeader
         title="Farm Dashboard"
         subtitle="Whole-farm drought impact summary across all crops."
       />
 
       <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+
+        {/* Toolbar */}
+        <div className="flex justify-end gap-2 no-print">
+          <button onClick={handleShare}
+            className="text-sm font-medium px-3 py-1.5 rounded-lg border border-gray-300 hover:border-gray-400 text-gray-600 hover:text-gray-800 transition-colors">
+            🔗 Share
+          </button>
+          <button onClick={() => window.print()}
+            className="text-sm font-medium px-3 py-1.5 rounded-lg border border-gray-300 hover:border-gray-400 text-gray-600 hover:text-gray-800 transition-colors">
+            🖨️ Print Summary
+          </button>
+        </div>
+
+        {/* Toast */}
+        {toast && (
+          <div className="no-print fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-[#1a3a0a] text-white text-sm px-5 py-3 rounded-xl shadow-lg">
+            Link copied! Anyone with this link can view your farm summary.
+          </div>
+        )}
+
+        {/* Shared-view banner */}
+        {isSharedView && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 flex items-center justify-between gap-3 no-print">
+            <span className="text-sm text-amber-800">
+              You are viewing a shared farm summary — go to{' '}
+              <Link to="/farm-setup" className="font-semibold underline">Farm Setup</Link>{' '}
+              to enter your own data.
+            </span>
+          </div>
+        )}
 
         {/* Farm info banner */}
         <div className="bg-[#27500A] text-white rounded-xl p-4 flex flex-wrap gap-4 items-center">
@@ -126,7 +201,7 @@ export default function FarmDashboard() {
         {hasCrops && (
           <>
             {/* Drought scenario controls */}
-            <section className="bg-white rounded-xl shadow-sm p-5 space-y-4">
+            <section className="bg-white rounded-xl shadow-sm p-5 space-y-4 no-print">
               <h2 className="font-bold text-[#27500A] text-base">Drought Scenario</h2>
               <div>
                 <label className="flex justify-between text-sm font-medium text-gray-700 mb-1">

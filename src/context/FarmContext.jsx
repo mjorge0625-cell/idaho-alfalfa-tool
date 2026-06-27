@@ -1,6 +1,8 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 
 const FarmContext = createContext(null)
+
+const STORAGE_KEY = 'idaho-alfalfa-farm'
 
 const defaultFarm = {
   farmerName: '',
@@ -9,8 +11,21 @@ const defaultFarm = {
   crops: [],
 }
 
+function loadFarm() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    return stored ? { ...defaultFarm, ...JSON.parse(stored) } : defaultFarm
+  } catch {
+    return defaultFarm
+  }
+}
+
 export function FarmProvider({ children }) {
-  const [farm, setFarm] = useState(defaultFarm)
+  const [farm, setFarm] = useState(loadFarm)
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(farm))
+  }, [farm])
 
   function updateFarm(updates) {
     setFarm(prev => ({ ...prev, ...updates }))
@@ -32,6 +47,7 @@ export function FarmProvider({ children }) {
   }
 
   function resetFarm() {
+    localStorage.removeItem(STORAGE_KEY)
     setFarm(defaultFarm)
   }
 

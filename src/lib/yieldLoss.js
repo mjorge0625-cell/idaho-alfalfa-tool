@@ -1,11 +1,17 @@
 // Yield loss breakpoints: [waterCutPct, moderateLossPct, severeLossPct]
-// Alfalfa: Crookston et al. 2025; Montazar & Putnam 2020, 2023
+// Base curves: Crookston et al. 2025; Montazar & Putnam 2020, 2023
+// Re-calibrated against Idaho PDSI 2000–2025 (growing-season Apr–Sep avg):
+//   25% cut ≈ PDSI -2.2  (moderate drought centroid; 9 of 26 Idaho seasons)
+//   30% cut ≈ PDSI -2.7  (transition zone; 4–5 Idaho seasons in PDSI -2.5 to -3.0)
+//   40% cut ≈ PDSI -3.6  (severe; 2021: PDSI -3.56, D2+ drought on 85% of Idaho)
+//   50% cut ≈ PDSI -4.1  (extreme; 2001: PDSI -4.13, D3+ drought on 58% of Idaho)
 const ALFALFA = [
-  [0,  0,  0],
-  [10, 2,  4],
-  [25, 6,  15],
-  [40, 18, 32],
-  [50, 38, 43],
+  [0,   0,  0],
+  [10,  2,  4],
+  [25,  7, 16],
+  [30, 11, 22],
+  [40, 19, 34],
+  [50, 38, 48],
 ]
 
 // Corn / Potatoes (proxy): USDA/extension estimates

@@ -10,7 +10,9 @@ const NAV_LINKS = [
   { to: '/cutting',     label: 'Cutting Timing' },
   { to: '/dashboard',   label: 'Dashboard' },
   { to: '/machinery',   label: 'Machinery Costs' },
-  { to: '/costs',       label: 'Input Costs' },
+  { to: '/costs',           label: 'Input Costs' },
+  { to: '/drought-history', label: 'Drought History' },
+  { to: '/quick',           label: '⚡ Quick Check' },
 ]
 
 export default function Navbar() {

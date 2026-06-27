@@ -1,0 +1,1 @@
+This folder contains source data and literature used to calibrate the calculators in this tool. Files include PDSI drought data by state, USDA AMS hay price transaction data, and peer-reviewed literature summaries. Do not delete.

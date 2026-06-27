@@ -11,6 +11,9 @@ import CuttingTiming from './pages/CuttingTiming'
 import FarmDashboard from './pages/FarmDashboard'
 import MachineryCost from './pages/MachineryCost'
 import InputCosts from './pages/InputCosts'
+import DroughtHistory from './pages/DroughtHistory'
+import QuickCheck from './pages/QuickCheck'
+import FeedbackWidget from './components/FeedbackWidget'
 
 export default function App() {
   return (
@@ -27,8 +30,11 @@ export default function App() {
           <Route path="/dashboard"  element={<FarmDashboard />} />
           <Route path="/machinery"  element={<MachineryCost />} />
           <Route path="/costs"      element={<InputCosts />} />
+          <Route path="/drought-history" element={<DroughtHistory />} />
+          <Route path="/quick"          element={<QuickCheck />} />
         </Routes>
         <Footer />
+        <FeedbackWidget />
       </BrowserRouter>
     </FarmProvider>
   )

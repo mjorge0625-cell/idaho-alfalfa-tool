@@ -28,7 +28,7 @@ const blankCrop = {
 }
 
 export default function FarmSetup() {
-  const { farm, updateFarm, addCrop, removeCrop } = useFarm()
+  const { farm, updateFarm, addCrop, removeCrop, resetFarm } = useFarm()
   const [newCrop, setNewCrop] = useState(blankCrop)
   const [saved, setSaved] = useState(false)
 
@@ -64,6 +64,7 @@ export default function FarmSetup() {
         title="Farm Setup"
         subtitle="Enter your operation details once — all calculators will use this data."
       />
+      <p className="text-center text-xs text-gray-400 -mt-3 mb-1">Your farm data is saved automatically in this browser.</p>
 
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
         {/* Basic info */}
@@ -215,6 +216,19 @@ export default function FarmSetup() {
             )}
           </form>
         </section>
+
+        <div className="text-center pb-2">
+          <button
+            onClick={() => {
+              if (window.confirm('This will delete all your saved farm data. Are you sure?')) {
+                resetFarm()
+              }
+            }}
+            className="text-xs text-gray-400 hover:text-red-500 transition-colors underline underline-offset-2"
+          >
+            Clear saved data
+          </button>
+        </div>
       </div>
     </div>
   )
